@@ -27,6 +27,11 @@ from immutables import Map
 import pprint
 pp = pprint.PrettyPrinter(indent=2, width=40).pprint
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+LOGGER = logging.getLogger(__name__)
+
 def freeze(obj):
   """Convert data structure into an immutable data structure.
 
@@ -92,25 +97,28 @@ def unfreeze(obj):
   >>> unfreeze(map_object)
   {'key': {'nested_key': 'nested_value'}}
   """
-  print('moving')
-  print(type(obj).__name__)
+  LOGGER.debug(type(obj).__name__)
   if type(obj).__name__ in ('str', 'int', 'float', 'bool'):
-    print(obj)
+    LOGGER.debug(obj)
     return obj
 
-  print('sweet')
+  LOGGER.debug('sweet')
   try:
     #Try to see if this is a mapping
     try:
       obj[tuple(obj)]
     except KeyError:
       is_mapping = True
+      LOGGER.debug('is_mapping')
     else:
       is_mapping = False
   except (TypeError, IndexError):
     is_mapping = False
 
   if is_mapping:
+    for key in obj.keys():
+      if type(key).__name__ in ('tuple', 'immutables.Map'):
+        LOGGER.info('Input has hashable type "%s" used as a key. This will remain frozen, as dict keys must be hashable.', type(key).__name__)
     return {key: unfreeze(value) for key, value in obj.items()}
 
   try:
@@ -129,18 +137,21 @@ def unfreeze(obj):
 
   if is_iterable:
     print(obj)
-    # return list(unfreeze(i) for i in obj)
-    print(cls)
-    res = set(unfreeze(i) for i in obj)
-    return res
+    res = list(unfreeze(i) for i in obj)
+    try:
+      return cls(res)
+    except TypeError:
+      LOGGER.info("Cannot create a set out of input, set contained hashable types. Converting set to list.")
+      return res
+    # return res
 
   return obj
 
-print('unfreeze string')
-print(unfreeze('m'))
+
 def print_map(map_object):
   dict_obj = unfreeze(map_object)
   pp(dict_obj)
+
 
 if __name__ == "__main__":
   import doctest

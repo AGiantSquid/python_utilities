@@ -13,8 +13,6 @@ from typing import (
     Union,
 )
 
-from .iterable_utils import divide
-
 import sys
 sys.setrecursionlimit(10**2)
 

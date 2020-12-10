@@ -3,7 +3,7 @@ from importlib import reload
 
 import pytest
 
-from python_utils.logging_utils import initialize_logger
+from python_utils.logging_utils import initialize_logger, lazy_evaluate_string
 
 
 @pytest.fixture()
@@ -33,3 +33,38 @@ def test_initialize_logger_bad_value(capsys, reset_logger):
     assert msg in captured.err
 
     assert logging.root.level == logging.INFO
+
+
+def test_lazy_evaluate_string(capsys, reset_logger):
+    '''Functions wrapped with lazy_evaluate_string should only evaluate when logged.'''
+    initialize_logger('INFO')
+
+    # flush captured output
+    capsys.readouterr()
+    called = False
+
+    @lazy_evaluate_string
+    def test_func():
+        nonlocal called
+        called = True
+        return 'result'
+
+    # res is not printed, so test_func is not called
+    res = test_func()
+    assert called is False
+
+    # logger set to info, so debug not evaluated
+    logging.debug('%s', test_func())
+    assert called is False
+
+    # verify nothing got printed
+    _, stderr = capsys.readouterr()
+    assert 'result' not in stderr
+
+    # warning is evaluated, so test_func is called
+    logging.warning('%s', test_func())
+    assert called is True
+
+    # verify the result from test_func actually gets printed
+    _, stderr = capsys.readouterr()
+    assert 'result' in stderr

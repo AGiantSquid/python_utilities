@@ -6,7 +6,7 @@ from typing import TypedDict, Union, Optional, List
 
 import pytest
 
-from python_utilities.typing_utils import verify_type, is_typed_dict, is_list_with_specified_data_type, is_generic_type
+from python_utils.typing_utils import verify_type, is_typed_dict, is_list_with_specified_data_type, is_generic_type
 
 
 def test_is_typed_dict():

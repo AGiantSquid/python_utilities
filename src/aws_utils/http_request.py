@@ -2,7 +2,7 @@
 import json
 from typing import Optional
 
-from .exceptions import BadRequest
+from aws_utils.exceptions import BadRequest
 
 
 def get_body_from_post_request(event: dict):

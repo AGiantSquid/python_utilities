@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from sequence_utils import unpack_apply
+from python_utils.sequence_utils import unpack_apply
 
 
 def capitalize(x: str) -> str:

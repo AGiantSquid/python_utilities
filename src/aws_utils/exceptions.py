@@ -41,11 +41,3 @@ class BadRequest(ServerError):
 class InternalServerError(ServerError):
     '''Generic exception for internal errors while processing requests.'''
     error_code = 500
-
-
-class GTMConnectionError(Exception):
-    '''Exception to raise if there is an error connection with GTM.'''
-
-
-class ElasticSearchConnectionError(Exception):
-    '''Exception to raise if there is an error connecting to elasticsearch.'''

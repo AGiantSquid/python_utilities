@@ -2,7 +2,7 @@
 from immutables import Map
 import pytest
 
-from python_utilities.immutables_utils import unfreeze, freeze
+from immutables_utils import unfreeze, freeze
 
 
 def test_string_freeze():

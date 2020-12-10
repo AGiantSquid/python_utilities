@@ -2,7 +2,7 @@
 '''
 Module to demonstrate that string utils work.
 '''
-from python_utilities.string_utils import camel_to_snake, snake_to_camel
+from python_utils.string_utils import camel_to_snake, snake_to_camel
 
 
 def test_camel_to_snake():

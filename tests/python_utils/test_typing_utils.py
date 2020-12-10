@@ -49,7 +49,7 @@ def test_verify_type_basic_types():
 
     with pytest.raises(TypeError) as e:
         verify_type(1, str)
-    print(e)
+
     assert e.value.args == ("must be str, not int", None)
 
 

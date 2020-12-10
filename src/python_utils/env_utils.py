@@ -4,8 +4,7 @@
 Module for fetching environment variables.
 '''
 import os
-from collections.abc import Iterable
-from typing import Optional
+from typing import Optional, Sequence
 
 
 def getenv_str(variable: str, default: Optional[str] = None) -> str:
@@ -88,17 +87,31 @@ def getenv_bool(variable: str, default: Optional[bool]) -> bool:
 
 
 def clean_string(value: Optional[str]) -> Optional[str]:
-    '''Cleans a string of quote and space characters.'''
-    return value.strip().replace("'", "").replace('"', "") if value else value
+    '''Cleans a string of quote and space characters.
+    >>> clean_string("'True'")
+    'True'
+    >>> clean_string('  "false"  ')
+    'false'
+    >>> clean_string("Bob's House")
+    "Bob's House"
+    '''
+    return value.strip().strip('"').strip("'") if value else value
 
 
 def _verify_default_value_type(default, expected_type):
-    '''Raise TypeError if user attempts to use a default value that is the wrong type.'''
+    '''Raise TypeError if user attempts to use a default value that is the wrong type.
+
+    >>> _verify_default_value_type('hey', str)
+
+    >>> _verify_default_value_type(2, str)
+    Traceback (most recent call last):
+    ...
+    TypeError: Default value must be a str! Received value "2" of type: int
+    '''
     if not isinstance(default, expected_type):
 
         # Handle tuples of possible valid types elegantly if at all possible
-        expected_type = expected_type[0] if isinstance(
-            expected_type, Iterable) else expected_type
+        expected_type = expected_type[0] if isinstance(expected_type, Sequence) else expected_type
 
         raise TypeError(
             f'Default value must be a {expected_type.__name__}! ' +

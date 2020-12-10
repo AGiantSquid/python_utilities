@@ -1,4 +1,4 @@
-#! /usr/bin/env python3.8
+#! /usr/bin/env python3
 '''
 Module sets formatting style of logs and sets the log level from an environment variable.
 
@@ -9,14 +9,15 @@ then any calls to the logging module will not be formatted properly.
 import logging
 
 
-def initialize_logger(log_level: str):
+def initialize_logger(log_level: str, remove_existing_handlers=False):
     '''Set logging level to the level specified in environment, and set formatting.
 
     Default to "INFO" if an invalid log_level value specified.'''
     # Note, do NOT do any logging in this function until the "basicConfig" is set!
     unable_to_set_user_log_level = False
 
-    unset_aws_handlers()
+    if remove_existing_handlers:
+        remove_handlers()
 
     upper_case_level = log_level.upper()
 
@@ -39,7 +40,7 @@ def initialize_logger(log_level: str):
             'User attempted to set log level to "%s", which is not a valid log level!', log_level)
 
 
-def unset_aws_handlers():
+def remove_handlers():
     '''Unset handlers, so our custom log level will work.
 
     The following is a hack to get around the fact that AWS is setting

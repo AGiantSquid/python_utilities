@@ -2,7 +2,7 @@
 '''
 Module to verify iterable utils work.
 '''
-from python_utilities.iterable_utils import divide
+from python_utils.iterable_utils import divide
 
 
 def test_divide():

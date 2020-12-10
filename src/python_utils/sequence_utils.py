@@ -8,8 +8,8 @@ from typing import Sequence
 def unpack_apply(iterable_input: Sequence, *args) -> tuple:
     '''Apply a sequence of functions to elements in a sequence by index.
 
-    >>> x = ('bob', '33', 'fbi')
-    >>> unpack_apply(x, lambda x: x.capitalize(), int, lambda x: x.upper())
+    >>> x = 'bob 33 fbi'
+    >>> unpack_apply(x.split(' '), str.capitalize, int, str.upper)
     ('Bob', 33, 'FBI')
     '''
     try:

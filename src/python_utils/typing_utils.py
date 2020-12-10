@@ -3,22 +3,19 @@
 Module with functions to help with typing assertions.
 '''
 from typing import (
-    _TypedDictMeta,
-    ABCMeta,
+    Any,
+    Type,
     get_args,
     get_origin,
     get_type_hints,
     Optional,
-    TypedDict,
     Union,
 )
 
-import sys
-sys.setrecursionlimit(10**2)
 
-def is_typed_dict(x: ABCMeta):
+def is_typed_dict(x: Union[Type, Any]) -> bool:
     '''Return true if x is a class that inherits from TypedDict.'''
-    return x.__class__ == _TypedDictMeta
+    return x.__class__.__name__ == '_TypedDictMeta'
 
 
 def is_generic_type(x):
@@ -43,7 +40,7 @@ def is_list_with_specified_data_type(subject):
     return get_origin(subject) == list and len(get_args(subject))
 
 
-def verify_type(subject, expected_type: ABCMeta, label: Optional[str]=None):
+def verify_type(subject, expected_type: type, label: Optional[str]=None):
     '''Raise error if subject is not of expected type.
 
     This function overcomes the limitations of builtin isinstance()
@@ -109,7 +106,7 @@ def _get_type_error(subject, possible_types, label):
     return TypeError(error_msg, label)
 
 
-def _verify_typed_dict(subject, expected_type: ABCMeta, label: Optional[str]=None):
+def _verify_typed_dict(subject, expected_type: Type, label: Optional[str]=None):
     '''Check that subject has the proper keys/values for a typed_dict.
 
     Raise KeyError if subject does not have all the specified keys.

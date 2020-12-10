@@ -4,7 +4,7 @@ import logging
 from decimal import Decimal
 from typing import TypedDict, Optional
 
-from .exceptions import BadRequest, InternalServerError, ServerError
+from aws_utils.exceptions import BadRequest, InternalServerError, ServerError
 
 
 LOGGER = logging.getLogger(__file__)

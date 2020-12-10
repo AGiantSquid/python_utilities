@@ -7,7 +7,7 @@ from immutables_utils import unfreeze, freeze
 
 def test_string_freeze():
     '''leave the string as is'''
-    string = 'just livin that string lifeu'
+    string = 'just livin that string life'
     res = freeze(string)
 
     assert isinstance(res, str)
@@ -63,7 +63,7 @@ def test_nested_dict_freeze():
 
 def test_string_unfreeze():
     '''leave the string as is'''
-    string = 'just livin that string lifeu'
+    string = 'just livin that string life'
     res = unfreeze(string)
 
     assert isinstance(res, str)
@@ -124,7 +124,6 @@ def test_frozendict_with_tuple_keys():
       (0, 2): 'string_value_2',
     })
     res = unfreeze(nested_test)
-    print(res)
 
     assert isinstance(res, dict)
 
@@ -165,7 +164,7 @@ def test_unfreeze_2():
     })
 
     result = unfreeze(map_object)
-    print(result)
+
     expected_result = [
         {
             'testing_facility': [

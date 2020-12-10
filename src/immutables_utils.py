@@ -1,4 +1,4 @@
-"""Convert (possibly nested) data structures into immutable data structures.
+'''Convert (possibly nested) data structures into immutable data structures.
 
 The "freeze" function recursively turns dictionaries into
 immutable Map objects, lists into tuples,
@@ -22,7 +22,7 @@ TypeError: 'immutables._map.Map' object does not support item assignment
 Traceback (most recent call last):
     ...
 TypeError: 'immutables._map.Map' object does not support item assignment
-"""
+'''
 import logging
 import pprint
 
@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 
 def freeze(obj):
-    """Convert data structure into an immutable data structure.
+    '''Convert data structure into an immutable data structure.
 
     >>> list_test = [1, 2, 3]
     >>> freeze(list_test)
@@ -44,7 +44,7 @@ def freeze(obj):
     >>> set_test = {1, 2, 3}
     >>> freeze(set_test)
     frozenset({1, 2, 3})
-    """
+    '''
 
     try:
         # See if the object is hashable
@@ -92,7 +92,7 @@ def freeze(obj):
 
 
 def unfreeze(obj):
-    """Convert all map objects to dicts.
+    '''Convert all map objects to dicts.
     NOTE: Cannot reliably turn frozensets into sets,
     as the objects in the set may become unhashable after unfreezing
     All frozen sets are converted to lists.
@@ -102,9 +102,9 @@ def unfreeze(obj):
     ... })
     >>> unfreeze(map_object)
     {'key': {'nested_key': 'nested_value'}}
-    """
+    '''
     def sorted_list(iterable):
-        """Use a sorted list instead of a set."""
+        '''Use a sorted list instead of a set.'''
         return sorted(list(iterable))
 
     # print('movinwg')

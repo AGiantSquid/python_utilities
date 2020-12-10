@@ -7,6 +7,7 @@ If any other modules that use logging are imported before this file,
 then any calls to the logging module will not be formatted properly.
 '''
 import logging
+from functools import wraps
 
 
 def initialize_logger(log_level: str, remove_existing_handlers=False):
@@ -49,3 +50,26 @@ def remove_handlers():
     if root.handlers:
         for handler in root.handlers:
             root.removeHandler(handler)
+
+class LazyString(object):
+    '''Postpone function evaluation until it is stringified.'''
+
+    def __init__(self, func, *args):
+        self.func = func
+        self.args = args
+
+    def __str__(self):
+        return '{0}'.format(self.func(*self.args))
+
+
+def lazy_evaluate_string(func):
+    '''Return class that only evaluates input function when stringified.
+
+    Decorate function that returns string when using with logger.'''
+
+    @wraps(func)
+    def wrapper(*args):
+        dm = LazyString(func, *args)
+        return dm
+
+    return wrapper

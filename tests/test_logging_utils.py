@@ -3,7 +3,7 @@ from importlib import reload
 
 import pytest
 
-from python_utilities.logging_config import initialize_logger
+from python_utilities.logging_utils import initialize_logger
 
 
 @pytest.fixture()

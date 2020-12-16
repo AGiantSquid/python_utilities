@@ -3,11 +3,21 @@
 Utils to help writing and reading from the db.
 '''
 import logging
-from typing import Dict, List, TypedDict
+from typing import Dict, List, TypedDict, Protocol
 
 from python_utils.logging_utils import lazy_evaluate_string
 
 logger = logging.getLogger(__file__)
+
+
+class ExecuteStatement(Protocol):
+    '''Function signature for boto db execute_statement with config args already applied.'''
+    def __call__(self, sql: str, parameters: List[dict]) -> dict: ...
+
+
+class BatchExecuteStatement(Protocol):
+    '''Function signature for boto db execute_statement with config args already applied.'''
+    def __call__(self, sql: str, parameterSets: List[List[dict]]) -> dict: ...
 
 
 PYTHON_BOTO_DATA_MAPPING = {

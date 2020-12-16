@@ -1,3 +1,5 @@
 pytest
 immutables
 -e .
+numpy
+pandas

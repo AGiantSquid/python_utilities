@@ -41,3 +41,9 @@ def test_unpack_apply_generator():
     x = (_ for _ in ['bob', '33', 'fbi'])
     res = unpack_apply(x, capitalize, int, upper)
     assert res == ('Bob', 33, 'FBI')
+
+
+def test_unpack_apply_with_none():
+    x = ['bob', '33', 'fbi']
+    res = unpack_apply(x, capitalize, None, upper)
+    assert res == ('Bob', '33', 'FBI')

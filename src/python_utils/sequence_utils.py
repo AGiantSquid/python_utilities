@@ -18,7 +18,7 @@ def unpack_apply(iterable_input: Sequence, *args) -> tuple:
     except TypeError:
         input_sequence = list(iterable_input)
 
-    applied = (_[1](_[0]) for _ in zip(input_sequence, args))
+    applied = (_[1](_[0]) if _[1] else _[0] for _ in zip(input_sequence, args))
 
     rest = input_sequence[len(args):]
 

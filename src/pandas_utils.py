@@ -83,12 +83,14 @@ def convert_date_col_to_str(df: DataFrame, column_name: str) -> DataFrame:
 def df_to_dict(df: DataFrame) -> dict:
     return df.to_dict('records')
 
+
 def transform_db_response_cell(cell):
     if cell.get('isNull'):
         return 'empty'
 
     clean = list(cell.values())[0]
     return clean
+
 
 def db_response_to_df(df):
     return df.apply(transform_db_response_cell)

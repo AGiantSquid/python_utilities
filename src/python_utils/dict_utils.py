@@ -88,10 +88,9 @@ def get_key_by_val(subject: dict, target_val):
     '''Get a dictionary key by its value.
     This only works with dictionaries with unique values.
 
-
-    subject = {"key1":"val1", "key2":"val2"}
-    target_val = "val2"
-    get_key_by_val(subject, target_val)
+    >>> subject = {"key1":"val1", "key2":"val2"}
+    >>> target_val = "val2"
+    >>> get_key_by_val(subject, target_val)
     "key2"
     '''
     for key, val in subject.items():

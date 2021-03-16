@@ -1,7 +1,9 @@
 '''Module with functions for returning responses from AWS lambda.'''
 import json
 import logging
+import traceback
 from decimal import Decimal
+from functools import wraps
 from typing import TypedDict, Optional
 
 from aws_utils.exceptions import BadRequest, InternalServerError, ServerError
@@ -67,3 +69,24 @@ def http_response(body: str, code=200, headers: Optional[dict] = None) -> Respon
         'statusCode': code,
         'headers': headers,
     }
+
+
+def handle_exceptions(func):
+    '''Decorator to handle all unhandled exceptions in a lambda.
+
+    If you do not handle an exception in a lambda, the front end gets a CORS error.
+    This returns the last line of the python exception to aid in debugging for any
+    unspecified errors.'''
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception:
+            exc = InternalServerError(
+                'unhandled internal error',
+                errors=[traceback.format_exc(1)]
+            )
+
+            return internal_server_error(exc)
+
+    return wrapper

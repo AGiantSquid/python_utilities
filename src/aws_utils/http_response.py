@@ -5,7 +5,7 @@ from decimal import Decimal
 from typing import TypedDict, Optional
 
 from aws_utils.exceptions import BadRequest, InternalServerError, ServerError
-
+from python_utils.json_utils import decimal_default
 
 LOGGER = logging.getLogger(__file__)
 DEFAULT_HEADERS = {
@@ -21,17 +21,6 @@ class Response(TypedDict):
     statusCode: int
     headers: dict
     body: str  # body is a json string
-
-
-def decimal_default(obj):
-    '''Needed to get default json library to correctly parse Decimal objects.
-    See the following for more detail:
-    https://stackoverflow.com/questions/16957275/python-to-json-serialization-fails-on-decimal/16957370#16957370
-    '''
-    if isinstance(obj, Decimal):
-        return float(obj)
-    raise TypeError("Object of type '%s' is not JSON serializable" %
-                    type(obj).__name__)
 
 
 def success_response(payload) -> Response:

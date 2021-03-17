@@ -38,9 +38,9 @@ class ServerError(Exception):
 
 class BadRequest(ServerError):
     '''Generic exception for requests that are malformed.'''
-    error_code = HTTPStatus.BAD_REQUEST
+    error_status = HTTPStatus.BAD_REQUEST
 
 
 class InternalServerError(ServerError):
     '''Generic exception for internal errors while processing requests.'''
-    error_code = HTTPStatus.INTERNAL_SERVER_ERROR
+    error_status = HTTPStatus.INTERNAL_SERVER_ERROR

@@ -6,7 +6,7 @@ from functools import wraps
 from http import HTTPStatus
 from typing import TypedDict, Optional
 
-from aws_utils.exceptions import BadRequest, InternalServerError, ServerError
+from aws_utils.http_exceptions import BadRequest, InternalServerError, ServerError
 from python_utils.json_utils import decimal_default
 
 LOGGER = logging.getLogger(__file__)

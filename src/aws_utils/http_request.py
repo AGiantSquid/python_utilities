@@ -2,7 +2,7 @@
 import json
 from typing import Optional, TypedDict
 
-from aws_utils.exceptions import BadRequest
+from aws_utils.http_exceptions import BadRequest
 
 
 class PostRequest(TypedDict):

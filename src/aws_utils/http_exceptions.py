@@ -2,20 +2,23 @@
 '''
 This module contains useful Exceptions for lambda functions
 '''
+from http import HTTPStatus
+from typing import Optional
 
 
 class ServerError(Exception):
     '''Parent class for HTTP Error Responses.
 
-    Any child classes should define self.error_code.'''
-    error_code = None
+    Any child classes should define self.error_status.'''
+    error_status: Optional[HTTPStatus] = None
 
     def __init__(self, message=None, errors=None):
         super().__init__(message)
 
-        if self.error_code is None:
+        if self.error_status is None:
+            err_name = self.__class__.__name__
             raise NotImplementedError(
-                f'You must assign a number to self.error_code for Error "{self.__class__.__name__}"'
+                f'You must assign an HTTPStatus to self.error_status for Error "{err_name}"'
             )
 
         self.message = message
@@ -28,16 +31,16 @@ class ServerError(Exception):
         to determine the appropriate error code. We prepend the error code to the string
         so that AWS can match the string and return the corresponding code to the user.'''
         if self.message:
-            return f'{self.error_code}: {self.message}'
+            return f'{self.error_status.value}: {self.message}'
         else:
-            return f'{self.error_code}'
+            return f'{self.error_status.value}'
 
 
 class BadRequest(ServerError):
     '''Generic exception for requests that are malformed.'''
-    error_code = 400
+    error_code = HTTPStatus.BAD_REQUEST
 
 
 class InternalServerError(ServerError):
     '''Generic exception for internal errors while processing requests.'''
-    error_code = 500
+    error_code = HTTPStatus.INTERNAL_SERVER_ERROR

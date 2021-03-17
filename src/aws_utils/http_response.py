@@ -2,8 +2,8 @@
 import json
 import logging
 import traceback
-from decimal import Decimal
 from functools import wraps
+from http import HTTPStatus
 from typing import TypedDict, Optional
 
 from aws_utils.exceptions import BadRequest, InternalServerError, ServerError
@@ -27,46 +27,50 @@ class Response(TypedDict):
 
 def success_response(payload) -> Response:
     '''Returns 200 response with payload serialized as json.'''
-    LOGGER.info('200 response: %s', payload)
+    LOGGER.info('Success response: %s', payload)
 
     body = json.dumps(payload, default=decimal_default)
 
-    return http_response(body, 200)
+    return http_response(body, HTTPStatus.OK)
 
 
 def bad_request(err: BadRequest) -> Response:
     '''Returns a 400 response with the error message.'''
-    return error_response(err, 400)
+    return error_response(err, HTTPStatus.BAD_REQUEST)
 
 
 def internal_server_error(err: InternalServerError) -> Response:
     '''Returns a 500 response with error message.'''
-    return error_response(err, 500)
+    return error_response(err, HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
-def error_response(err: ServerError, code: int) -> Response:
+def error_response(err: ServerError, status: HTTPStatus) -> Response:
     '''Returns response for errors.'''
     LOGGER.exception(err)
 
     errors = err.errors if err.errors else []
 
     body = json.dumps({
-        'code': code,
+        'code': status.value,
         'message': err.message,
         'errors': errors,
     }, default=decimal_default)
 
-    return http_response(body, code)
+    return http_response(body, status)
 
 
-def http_response(body: str, code=200, headers: Optional[dict] = None) -> Response:
+def http_response(
+        body: str,
+        status: HTTPStatus = HTTPStatus.OK,
+        headers: Optional[dict] = None,
+    ) -> Response:
     '''Returns http response for lambda.'''
     if headers is None:
         headers = DEFAULT_HEADERS
 
     return {
         'body': body,
-        'statusCode': code,
+        'statusCode': status.value,
         'headers': headers,
     }
 

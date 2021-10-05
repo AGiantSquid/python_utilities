@@ -13,6 +13,11 @@ from typing import (
 )
 
 
+def is_specified_dict(subject) -> bool:
+    '''Check if type is specified dict, like Dict[int, str]'''
+    return subject != dict and get_origin(subject) == dict
+
+
 def is_typed_dict(x: Union[Type, Any]) -> bool:
     '''Return true if x is a class that inherits from TypedDict.'''
     return x.__class__.__name__ == '_TypedDictMeta'
@@ -69,6 +74,10 @@ def verify_type(subject, expected_type: type, label: Optional[str]=None):
         else:
             return
 
+    if is_specified_dict(expected_type):
+        return _verify_specified_dict(subject, expected_type, label)
+
+
     if is_typed_dict(expected_type):
         return _verify_typed_dict(subject, expected_type, label)
 
@@ -104,6 +113,21 @@ def _get_type_error(subject, possible_types, label):
     error_msg = f'must be {allowed_types}, not {type(subject).__name__}'.strip()
 
     return TypeError(error_msg, label)
+
+
+def _verify_specified_dict(subject, expected_type: Type, label: Optional[str]=None):
+    '''Check that subject has the proper keys/values for a Dict with types specifed.
+
+    Raise TypeError if subject is not a dict, or if any values are of wrong type.
+    '''
+    if not isinstance(subject, dict):
+        raise _get_type_error(subject, (expected_type,), label)
+
+    key_type, val_type = get_args(expected_type)
+
+    for key, val in subject.items():
+        verify_type(key, key_type, key)
+        verify_type(val, val_type, val)
 
 
 def _verify_typed_dict(subject, expected_type: Type, label: Optional[str]=None):

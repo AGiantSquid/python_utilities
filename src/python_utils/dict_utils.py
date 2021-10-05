@@ -3,7 +3,7 @@
 This module contains functions for working with dicts.
 '''
 from functools import partial, reduce
-from typing import ABCMeta
+from typing import ABCMeta, Any, Callable, Dict, TypedDict
 
 
 def dict_with_required_keys(content: dict, required_keys: tuple) -> dict:
@@ -96,3 +96,54 @@ def get_key_by_val(subject: dict, target_val):
     for key, val in subject.items():
         if val == target_val:
             return key
+
+
+class _DataConverterBase(TypedDict):
+    conversion_function: Callable[[str], Any]
+
+
+class DataConverter(_DataConverterBase, total=False):
+    """Example DataConverter
+    {
+        'conversion_function': int,
+        'default': 0,
+    }
+    """
+    # Include a 'default' if value not found. Omit 'default' to indicate required value.
+    default: Any
+
+
+# A dict of values with a DataConverter objects that have funcs to convert data
+DataConverterMap = Dict[str, DataConverter]
+
+
+def coerce_datatypes(datatype_map: DataConverterMap, data: dict) -> dict:
+    """Coerce fields in data to appropriate datatype.
+
+    Raise KeyError if required values are missing from data.
+    Raise ValueError if fields in data cannot be coerced.
+
+    Exceptions will return original exception is first argument,
+    key as second argument, and original value as third argument (if applicable).
+    """
+    updated = {}
+
+    for key, val in datatype_map.items():
+        try:
+            original_value = data[key]
+        except KeyError as e:
+            if 'default' not in val:
+                raise KeyError(e, key) from e
+
+            original_value = val['default']
+
+        conversion_func = val['conversion_function']
+
+        try:
+            new_value = conversion_func(original_value)
+        except (ValueError, TypeError) as e:
+            raise ValueError(e, (key, original_value)) from e
+
+        updated[key] = new_value
+
+    return updated

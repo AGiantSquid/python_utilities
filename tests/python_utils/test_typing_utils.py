@@ -23,14 +23,18 @@ def test_is_typed_dict():
 
 
 def test_is_generic_type():
-    assert(is_generic_type(str)) == True
-    assert(is_generic_type(list)) == True
-    assert(is_generic_type(int)) == True
-    assert(is_generic_type(dict)) == True
+    test_cases = (
+        (str, True),
+        (list, True),
+        (int, True),
+        (dict, True),
+        (List[str], False),
+        (TypedDict, False),
+        (Optional[str], False),
+    )
 
-    assert(is_generic_type(List[str])) == False
-    assert(is_generic_type(TypedDict)) == False
-    assert(is_generic_type(Optional[str])) == False
+    for tc in test_cases:
+        assert is_generic_type(tc[0]) == tc[1]
 
 
 def test_is_list_with_specified_data_type():

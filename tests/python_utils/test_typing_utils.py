@@ -2,7 +2,7 @@
 '''
 Module to verify typing utils work.
 '''
-from typing import TypedDict, Union, Optional, List
+from typing import Dict, TypedDict, Union, Optional, List
 
 import pytest
 
@@ -320,3 +320,75 @@ def test_verify_type_optional_typed_dict_with_error():
     with pytest.raises(TypeError) as e:
         verify_type(other_test_type, OtherTestType, 'body')
     assert e.value.args == ('must be of the following types: [\'TestType\', \'str\'], not float', 'other_field')
+
+
+def test_verify_type_specified_dict():
+    DictType = Dict[str, int]
+
+    subject = {
+        'str_1': 1
+    }
+    verify_type(subject, DictType, 'body')
+
+
+def test_verify_type_specified_dict_error_1():
+    DictType = Dict[str, int]
+
+    subject = {
+        'str_1': 'oops'
+    }
+
+    with pytest.raises(TypeError) as e:
+        verify_type(subject, DictType, 'body')
+    assert e.value.args == ('must be int, not str', 'oops')
+
+
+def test_verify_type_specified_dict_error_2():
+    DictType = Dict[str, int]
+
+    subject = {
+        42: 42
+    }
+
+    with pytest.raises(TypeError) as e:
+        verify_type(subject, DictType, 'body')
+    assert e.value.args == ('must be str, not int', 42)
+
+
+def test_verify_type_optional_specified_dict():
+    class TestType(TypedDict):
+        field: Dict[str, dict]
+
+    class OtherTestType(TypedDict):
+        other_field: Union[TestType, str]
+
+    other_test_type = {
+        'other_field': {
+            'field': {
+                'dynamic_key': {}
+            }
+        }
+    }
+    verify_type(other_test_type, OtherTestType, 'body')
+
+
+def test_verify_type_optional_specified_dict_with_error():
+    class TestType(TypedDict):
+        field: Dict[str, dict]
+
+    class OtherTestType(TypedDict):
+        other_field: Union[TestType, str]
+
+    other_test_type = {
+        'other_field': {
+            'field': {
+                'dynamic_key': 'wow'
+            }
+        }
+    }
+    with pytest.raises(TypeError) as e:
+        verify_type(other_test_type, OtherTestType, 'body')
+    assert e.value.args == (
+        "must be of the following types: ['TestType', 'str'], not dict",
+        'other_field',
+    )
